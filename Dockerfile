@@ -13,3 +13,5 @@ ENV NODE_ENV production
 
 # Run default entry
 CMD ["node" "index.js"]
+
+EXPOSE 3000
