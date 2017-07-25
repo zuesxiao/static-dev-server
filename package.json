@@ -1,0 +1,28 @@
+{
+  "name": "static-dev-server",
+  "description": "Simple static file server for dev with file watch",
+  "version": "0.0.1",
+  "author": {
+    "name": "zeus.xiao",
+    "email": "zeus.xiao@live.com",
+    "url": "https://github.com/zuesxiao"
+  },
+  "keywords": [
+    "file",
+    "static",
+    "development",
+    "watcher",
+    "express"
+  ],
+  "homepage": "https://github.com/zuesxiao/static-dev-server",
+  "bugs": {
+    "url": "https://github.com/zuesxiao/static-dev-server/issues",
+    "email": "zeus.xiao@live.com"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}

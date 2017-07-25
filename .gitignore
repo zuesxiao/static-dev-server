@@ -1,0 +1,25 @@
+### JetBrains template
+.idea/
+
+## File-based project format:
+*.iws
+*.iml
+*.ipr
+
+
+### macOS template
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+
+### Node template
+# Logs
+logs
+*.log
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Dependency directories
+node_modules/
