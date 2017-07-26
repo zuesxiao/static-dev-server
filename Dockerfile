@@ -1,4 +1,4 @@
-FROM node:6.11.1
+FROM node:8.1.4
 
 WORKDIR /sds
 
@@ -6,12 +6,10 @@ WORKDIR /sds
 ADD . /sds
 
 # Compile all projects
-RUN apt-get update -qq && apt-get install -y apt-utils build-essential && npm install --production
-
-# Set development environment as default
-ENV NODE_ENV production
+# RUN apt-get update -qq && apt-get install -y apt-utils build-essential && npm install --production
+RUN npm install --production
 
 # Run default entry
-CMD ["node" "index.js"]
+CMD ["npm", "start"]
 
 EXPOSE 3000
