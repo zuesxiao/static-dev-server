@@ -23,6 +23,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "chokidar": "^1.7.0",
     "express": "^4.15.3"
   }
 }

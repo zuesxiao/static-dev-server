@@ -3,16 +3,17 @@
  */
 
 const process = require('child_process');
-const fs = require('fs');
 const path = require('path');
-const watches = {};
-const CHAGES_TO_RUN = 20;
+const fs = require('fs');
+const chokidar = require('chokidar');
 
-module.exports.start = (watchPath, watchCmd) => {
+const watches = {};
+
+module.exports.watch = (watchPath, watchCmd) => {
   const rootPath = path.resolve(watchPath);
   fs.readdir(rootPath, (err, files) => {
     if (err) {
-      console.error(err);
+      console.log(err);
       return;
     }
 
@@ -21,22 +22,23 @@ module.exports.start = (watchPath, watchCmd) => {
       watches[file] = {realPath: realPath, changes: 0, isRunning: false};
       const stats = fs.lstatSync(realPath);
       if (stats.isDirectory()) {
-        fs.watch(realPath, {recursive: true}, () => {
+        console.log(`Start to watch ${realPath}`);
+        chokidar.watch(realPath, {ignored: /node_modules|git|idea/, ignoreInitial: true}).on('all', (eventType, path) => {
+          console.log(`${eventType} : ${path}`);
           const watch = watches[file];
-          if (!watch.isRunning && watch.changes > CHAGES_TO_RUN) {
+          if (!watch.isRunning) {
             watch.isRunning = true;
+            console.log(`Start build for ${file}`);
             process.exec(`cd ${watch.realPath} && ${watchCmd}`, (err) => {
               if (err) {
                 console.error(err);
                 return;
               }
+              console.log(`Build for ${file} complete`);
               watch.isRunning = false;
-              watch.changes -= CHAGES_TO_RUN;
             });
-          } else {
-            watch.changes += 1;
           }
-        });
+        })
       }
     });
   });

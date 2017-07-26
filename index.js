@@ -13,5 +13,5 @@ const express = require('./express');
 const app = express.init(publicPath);
 
 app.listen(port, () => {
-  watcher.start(watchPath, watchCmd);
+  watcher.watch(watchPath, watchCmd);
 });
