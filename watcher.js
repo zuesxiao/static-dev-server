@@ -7,7 +7,8 @@ const path = require('path');
 const fs = require('fs');
 const chokidar = require('chokidar');
 
-const looger = require('./logger')
+const logger = require('./logger');
+const progress = require('./progress');
 
 const watches = {};
 
@@ -15,7 +16,7 @@ module.exports.watch = (watchPath, watchCmd) => {
   const rootPath = path.resolve(watchPath);
   fs.readdir(rootPath, (err, files) => {
     if (err) {
-      looger.red(err);
+      logger.red(err);
       return;
     }
 
@@ -24,21 +25,23 @@ module.exports.watch = (watchPath, watchCmd) => {
       watches[file] = {realPath: realPath, changes: 0, isRunning: false};
       const stats = fs.lstatSync(realPath);
       if (stats.isDirectory()) {
-        looger.cyan(`Start to watch ${realPath}`);
+        logger.cyan(`Start to watch ${realPath}`);
         chokidar.watch(realPath, {ignored: /node_modules|git|idea/, ignoreInitial: true}).on('all', (eventType, path) => {
-          looger.blue(`${eventType} : ${path}`);
+          logger.blue(`${eventType} : ${path}`);
           const watch = watches[file];
           if (!watch.isRunning) {
             watch.isRunning = true;
-            looger.cyan(`Start build for ${file}`);
+            logger.cyan(`Start build for ${file}`);
+            const interval = progress('');
             childProcess.exec(`cd ${watch.realPath} && ${watchCmd}`, (err) => {
               watch.isRunning = false;
+              clearInterval(interval);
               if (err) {
-                looger.red(`Build for ${file} with error`);
-                looger.red(err);
+                logger.red(`Build for ${file} with error`);
+                logger.red(err);
                 return;
               }
-              looger.green(`Build for ${file} complete`);
+              logger.green(`Build for ${file} complete`);
             });
           }
         })

@@ -12,20 +12,22 @@ const childProcess = require('child_process');
 const watcher = require('./watcher');
 const express = require('./express');
 const logger = require('./logger');
+const progress = require('./progress');
 
 const app = express.init(publicPath, publicPathex);
 
 app.listen(port, () => {
   logger.magenta(`Static dev server start on port ${port}, have fun, :)\n`);
-  logger.cyan('Start initialize building...');
+  logger.cyan('Start Initialization building...');
+  const interval = progress('');
   childProcess.exec(`cd workspace && npm run build`, (err) => {
     if (err) {
-      logger.cyan('Initialize building meet some error:');
+      logger.cyan('Initialization building meet some error:');
       logger.red(err);
     } else {
-      logger.green('Initialize building complete...');
+      logger.green('Initialization building complete...\n');
     }
-
+    clearInterval(interval);
     watcher.watch(watchPath, watchCmd);
   });
 });
