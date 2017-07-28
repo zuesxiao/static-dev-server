@@ -20,7 +20,8 @@
     "email": "zeus.xiao@live.com"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build:docker": "./docker-build.sh"
   },
   "dependencies": {
     "chokidar": "^1.7.0",
