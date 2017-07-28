@@ -24,6 +24,7 @@
     "build:docker": "./docker-build.sh"
   },
   "dependencies": {
+    "chalk": "^2.0.1",
     "chokidar": "^1.7.0",
     "express": "^4.15.3"
   }
