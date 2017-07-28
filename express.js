@@ -24,7 +24,7 @@ module.exports.init = (publicPath, publicPathex) => {
   });
 
   app.use(function (req, res) {
-    return res.redirect('/index.html');
+    return res.redirect('/');
   });
 
   return app;
