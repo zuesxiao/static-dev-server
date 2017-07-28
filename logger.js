@@ -16,7 +16,7 @@ module.exports.green = function (content) {
 };
 
 module.exports.blue = function (content) {
-  log(chalk.red(content));
+  log(chalk.blue(content));
 };
 
 module.exports.yellow = function (content) {
