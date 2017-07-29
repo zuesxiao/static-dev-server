@@ -30,3 +30,7 @@ module.exports.magenta = function (content) {
 module.exports.cyan = function (content) {
   log(chalk.cyan(content));
 };
+
+module.exports.gray = function (content) {
+  log(chalk.gray(content));
+};

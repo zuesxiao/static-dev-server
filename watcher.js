@@ -11,6 +11,11 @@ const logger = require('./logger');
 
 const watches = {};
 
+const createHandler = (folder) => (eventType, path) => {
+  logger.blue(`${eventType} : ${path}`);
+  watches[folder].changes += 1;
+};
+
 module.exports.watch = (watchPath, watchCmd) => {
   const rootPath = path.resolve(watchPath);
   fs.readdir(rootPath, (err, files) => {
@@ -21,28 +26,46 @@ module.exports.watch = (watchPath, watchCmd) => {
 
     files.forEach((file) => {
       const realPath = path.resolve(rootPath, file);
-      watches[file] = {realPath: realPath, changes: 0, isRunning: false};
       const stats = fs.lstatSync(realPath);
       if (stats.isDirectory()) {
         logger.cyan(`Start to watch ${realPath}`);
-        chokidar.watch(realPath, {ignored: /node_modules|git|idea/, ignoreInitial: true}).on('all', (eventType, path) => {
-          logger.blue(`${eventType} : ${path}`);
-          const watch = watches[file];
-          if (!watch.isRunning) {
-            watch.isRunning = true;
-            logger.cyan(`Start build for ${file}, wait a moment`);
-            childProcess.exec(`cd ${watch.realPath} && ${watchCmd}`, (err) => {
-              watch.isRunning = false;
-              if (err) {
-                logger.red(`Build for ${file} with error`);
-                logger.red(err);
-                return;
-              }
-              logger.green(`Build for ${file} complete`);
-            });
-          }
-        })
+        watches[file] = {
+          realPath,
+          changes: 0,
+          isRunning: false
+        };
+        const handler = createHandler(file);
+        chokidar.watch(realPath, {ignored: /node_modules|git|idea|log/, ignoreInitial: true})
+          .on('add', handler)
+          .on('change', handler)
+          .on('unlink', handler);
       }
     });
   });
+
+  setInterval(() => {
+    Object.keys(watches).forEach((key) => {
+      const watch = watches[key];
+      if (watch.isRunning) {
+        logger.yellow(`Last build for ${key} is not complete, this one will be skipped.`);
+      } else if (watch.changes <= 0) {
+        if (process.env.SHOW_NO_CHANGES) {
+          logger.gray(`No changes for ${key} to be built.`);
+        }
+      } else {
+        watch.isRunning = true;
+        logger.cyan(`Start build for ${key}, wait a moment...`);
+        childProcess.exec(`cd ${watch.realPath} && ${watchCmd}`, (err) => {
+          watch.isRunning = false;
+          if (err) {
+            logger.red(`Build for ${key} with error`);
+            logger.red(err);
+            return;
+          }
+          logger.green(`Build for ${key} complete`);
+          watch.changes = 0;
+        });
+      }
+    });
+  }, 1000);
 };
