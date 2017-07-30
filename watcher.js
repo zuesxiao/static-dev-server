@@ -9,12 +9,8 @@ const chokidar = require('chokidar');
 
 const logger = require('./logger');
 
+const EVENT_TYPES = ['add', 'change', 'unlink'];
 const watches = {};
-
-const createHandler = (folder) => (eventType, path) => {
-  logger.blue(`${eventType} : ${path}`);
-  watches[folder].changes += 1;
-};
 
 module.exports.watch = (watchPath, watchCmd) => {
   const rootPath = path.resolve(watchPath);
@@ -34,11 +30,13 @@ module.exports.watch = (watchPath, watchCmd) => {
           changes: 0,
           isRunning: false
         };
-        const handler = createHandler(file);
         chokidar.watch(realPath, {ignored: /node_modules|git|idea|log/, ignoreInitial: true})
-          .on('add', handler)
-          .on('change', handler)
-          .on('unlink', handler);
+          .on('all', (eventType, path) => {
+            if (EVENT_TYPES.indexOf(eventType) >= 0) {
+              logger.blue(`${eventType} : ${path}`);
+              watches[file].changes += 1;
+            }
+          });
       }
     });
   });
@@ -47,7 +45,7 @@ module.exports.watch = (watchPath, watchCmd) => {
     Object.keys(watches).forEach((key) => {
       const watch = watches[key];
       if (watch.isRunning) {
-        logger.yellow(`Building for ${key} is still running...`);
+        logger.gray(`Building for ${key} is still running...`);
       } else if (watch.changes <= 0) {
         if (process.env.SHOW_NO_CHANGES) {
           logger.gray(`No changes for ${key} to be built.`);
