@@ -47,7 +47,7 @@ module.exports.watch = (watchPath, watchCmd) => {
     Object.keys(watches).forEach((key) => {
       const watch = watches[key];
       if (watch.isRunning) {
-        logger.yellow(`Last build for ${key} is not complete, this one will be skipped.`);
+        logger.yellow(`Building for ${key} is still running...`);
       } else if (watch.changes <= 0) {
         if (process.env.SHOW_NO_CHANGES) {
           logger.gray(`No changes for ${key} to be built.`);
