@@ -30,7 +30,7 @@ module.exports.watch = (watchPath, watchCmd) => {
           changes: 0,
           isRunning: false
         };
-        chokidar.watch(realPath, {ignored: /node_modules|git|idea|log/, ignoreInitial: true})
+        chokidar.watch(realPath, {ignored: /node_modules|git|idea|log|dist/, ignoreInitial: true})
           .on('all', (eventType, path) => {
             if (EVENT_TYPES.indexOf(eventType) >= 0) {
               logger.blue(`${eventType} : ${path}`);
