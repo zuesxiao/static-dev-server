@@ -12,7 +12,7 @@ const logger = require('./logger');
 const EVENT_TYPES = ['add', 'change', 'unlink'];
 const watches = {};
 
-module.exports.watch = (watchPath, watchCmd) => {
+module.exports.watch = (watchPath, watchCmd, workPath) => {
   const rootPath = path.resolve(watchPath);
   fs.readdir(rootPath, (err, files) => {
     if (err) {
@@ -53,7 +53,7 @@ module.exports.watch = (watchPath, watchCmd) => {
       } else {
         watch.isRunning = true;
         logger.cyan(`Start build for ${key}, wait a moment...`);
-        childProcess.exec(`cd ${watch.realPath} && ${watchCmd}`, (err) => {
+        childProcess.exec(`cd ${watch.realPath} && ${watchCmd} -- -d ${path.resolve(workPath)}`, (err) => {
           watch.isRunning = false;
           if (err) {
             logger.red(`Build for ${key} with error`);

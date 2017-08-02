@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 const watchPath = process.env.WATCH_PATH || 'workspace';
 const watchCmd = process.env.WATHC_CMD || 'npm run build';
 const publicPath = process.env.PUBLIC_PATH || 'workspace/dist';
+const workPath = process.env.WORK_PATH || 'workspace';
 const publicPathex = process.env.PUBLIC_PATH_EX;
 
 const childProcess = require('child_process');
@@ -25,6 +26,6 @@ app.listen(port, () => {
     } else {
       logger.green('Initialization building complete...\n');
     }
-    watcher.watch(watchPath, watchCmd);
+    watcher.watch(watchPath, watchCmd, workPath);
   });
 });
