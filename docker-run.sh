@@ -3,7 +3,7 @@
 IMAGE_NAME="query-service"
 CONTAINER_NAME="query-service"
 
-if [[ "$(docker ps -q -f ancestor=$CONTAINER_NAME)" -ne "" ]]; then
+if [ "$(docker ps -q -f ancestor=$CONTAINER_NAME)" ]; then
   docker rm -f $CONTAINER_NAME
 fi
 
